@@ -1,0 +1,27 @@
+entity Profile {
+	fullName String,
+    birthday LocalDate,
+    familyPhones String,
+    bloodType String,
+    allergicReactions String,
+    sex HumanSex,
+    phone String,
+    isVolunteer Boolean,
+    fcmToken String,
+    latitude String, 
+    longitude String,
+    organization String
+}
+
+enum HumanSex {
+  MALE,
+  FEMALE
+}
+
+relationship OneToOne {
+  Profile{user(login)} to User
+}
+
+dto * with mapstruct
+service all with serviceClass
+filter Profile
