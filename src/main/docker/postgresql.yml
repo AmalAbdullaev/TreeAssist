@@ -1,0 +1,11 @@
+version: '2'
+services:
+    treeassist-postgresql:
+        image: postgres:10.4
+        # volumes:
+        #     - ~/volumes/jhipster/treeassist/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=treeassist
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432

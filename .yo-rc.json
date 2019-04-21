@@ -1,0 +1,35 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.youngbrains.treeassist"
+    },
+    "jhipsterVersion": "5.8.2",
+    "applicationType": "monolith",
+    "baseName": "treeassist",
+    "packageName": "com.youngbrains.treeassist",
+    "packageFolder": "com/youngbrains/treeassist",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "NTMwMTFjNmRhNzk4ODAxZmViNzY0OGE1ZTYwNjBlMDYxMjNhMjkzODM5OGIyNWQ2ZmVkZTg0NDY1YzA5OGVhMDg4NTczNjYzMDJlYjhmMWVjYzk5ZTc4OGFhZTVlNDI2NzRkNzUyN2FhNGJjMjMyZjU5MWIzZmVjZjRiZGFmYmI=",
+    "clientFramework": "react",
+    "useSass": false,
+    "clientPackageManager": "npm",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false
+  }
+}
