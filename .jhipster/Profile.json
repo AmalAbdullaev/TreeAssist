@@ -1,0 +1,81 @@
+{
+    "name": "Profile",
+    "fields": [
+        {
+            "fieldName": "fullName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "birthday",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "familyPhones",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "bloodType",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "allergicReactions",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "sex",
+            "fieldType": "HumanSex",
+            "fieldValues": "MALE,FEMALE"
+        },
+        {
+            "fieldName": "phone",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "isVolunteer",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "fcmToken",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "latitude",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "longitude",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "organization",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "login",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "profile",
+            "relationshipName": "user",
+            "otherEntityField": "login",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20190421190738",
+    "entityTableName": "profile",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceClass",
+    "jpaMetamodelFiltering": true,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

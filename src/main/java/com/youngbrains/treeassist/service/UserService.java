@@ -2,15 +2,19 @@ package com.youngbrains.treeassist.service;
 
 import com.youngbrains.treeassist.config.Constants;
 import com.youngbrains.treeassist.domain.Authority;
+import com.youngbrains.treeassist.domain.Profile;
 import com.youngbrains.treeassist.domain.User;
 import com.youngbrains.treeassist.repository.AuthorityRepository;
+import com.youngbrains.treeassist.repository.ProfileRepository;
 import com.youngbrains.treeassist.repository.UserRepository;
 import com.youngbrains.treeassist.security.AuthoritiesConstants;
 import com.youngbrains.treeassist.security.SecurityUtils;
+import com.youngbrains.treeassist.service.dto.ProfileCriteria;
 import com.youngbrains.treeassist.service.dto.UserDTO;
 import com.youngbrains.treeassist.service.util.RandomUtil;
 import com.youngbrains.treeassist.web.rest.errors.*;
 
+import io.github.jhipster.service.filter.LongFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -43,11 +47,17 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private final ProfileRepository profileRepository;
+
+    private final ProfileQueryService profileQueryService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, ProfileRepository profileRepository, ProfileQueryService profileQueryService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.profileRepository = profileRepository;
+        this.profileQueryService = profileQueryService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -117,6 +127,13 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+
+        Profile profile = new Profile();
+        profile.setUser(newUser);
+        profile.setLogin(newUser.getLogin());
+        profile.setEmail(newUser.getEmail());
+        profileRepository.save(profile);
+
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
@@ -223,6 +240,11 @@ public class UserService {
 
     public void deleteUser(String login) {
         userRepository.findOneByLogin(login).ifPresent(user -> {
+            ProfileCriteria profileCriteria = new ProfileCriteria();
+            LongFilter longFilter = new LongFilter();
+            longFilter.setEquals(user.getId());
+            profileCriteria.setUserId(longFilter);
+            profileQueryService.findByCriteria(profileCriteria);
             userRepository.delete(user);
             this.clearUserCaches(user);
             log.debug("Deleted User: {}", user);

@@ -10,7 +10,9 @@ entity Profile {
     fcmToken String,
     latitude String, 
     longitude String,
-    organization String
+    organization String,
+    login String,
+    email String
 }
 
 enum HumanSex {
