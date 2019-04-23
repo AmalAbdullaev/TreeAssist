@@ -29,7 +29,7 @@ spring:
         include: swagger
     mail:
         host: smtp.gmail.com
-        port: 456
+        port: 587
         username: information.elibrary@gmail.com
         password: NyaSaFA0
         protocol: smtp
@@ -38,6 +38,7 @@ spring:
             auth: true
             starttls.enable: true
             ssl.trust: smtp.gmail.com
+
 jhipster:
     http:
         version: V_1_1 # To use HTTP/2 you will need to activate TLS (see application-tls.yml)
