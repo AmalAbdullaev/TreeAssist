@@ -29,7 +29,7 @@ spring:
         include: swagger
     mail:
         host: smtp.gmail.com
-        port: 587
+        port: 456
         username: information.elibrary@gmail.com
         password: NyaSaFA0
         protocol: smtp
