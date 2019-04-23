@@ -36,14 +36,11 @@ spring:
         username: information.elibrary@gmail.com
         password: NyaSaFA0
         protocol: smtp
+        tls: true
         properties.mail.smtp:
             auth: true
             starttls.enable: true
             ssl.trust: smtp.gmail.com
-    messages:
-        cache-duration: PT1S # 1 second, see the ISO 8601 standard
-    thymeleaf:
-        cache: false
 jhipster:
     http:
         version: V_1_1 # To use HTTP/2 you will need to activate TLS (see application-tls.yml)
