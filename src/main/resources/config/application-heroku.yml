@@ -40,8 +40,5 @@ spring:
             auth: true
             starttls.enable: true
             ssl.trust: smtp.gmail.com
-jhipster:
-    mail:
-        from: treeassist@localhost
-        base-url: https://lit-harbor-34352.herokuapp.com/#/
+
 
