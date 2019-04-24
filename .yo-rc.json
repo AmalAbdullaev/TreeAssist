@@ -31,7 +31,7 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "herokuAppName": "lit-harbor-34352",
+    "herokuAppName": "treeassist",
     "herokuDeployType": "git"
   }
 }
