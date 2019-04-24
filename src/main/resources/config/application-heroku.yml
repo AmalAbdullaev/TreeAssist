@@ -24,3 +24,21 @@ spring:
         password: ${JDBC_DATABASE_PASSWORD}
         hikari:
             maximumPoolSize: 8
+    profiles:
+        active: dev
+        include: swagger
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: information.elibrary@gmail.com
+        password: NyaSaFA0
+        protocol: smtp
+        tls: true
+        properties.mail.smtp:
+            auth: true
+            starttls.enable: true
+            ssl.trust: smtp.gmail.com
+jhipster:
+    mail: # specific JHipster mail property, for standard properties see MailProperties
+        from: treeassist@localhost
+        base-url: https://treeassist.herokuapp.com
