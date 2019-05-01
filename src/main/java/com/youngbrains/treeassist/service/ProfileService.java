@@ -1,18 +1,28 @@
 package com.youngbrains.treeassist.service;
 
+
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.youngbrains.treeassist.domain.Profile;
 import com.youngbrains.treeassist.repository.ProfileRepository;
 import com.youngbrains.treeassist.service.dto.ProfileDTO;
 import com.youngbrains.treeassist.service.mapper.ProfileMapper;
+import net.logstash.logback.encoder.org.apache.commons.lang.UnhandledException;
+import org.apache.commons.lang3.builder.ToStringExclude;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +67,47 @@ public class ProfileService {
         return profileRepository.findAll().stream()
             .map(profileMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProfileDTO> help(String latitude,String longitude) {
+        log.debug("Request to get all Profiles");
+
+        ArrayList <ProfileDTO> profileDTOList = profileRepository.findAll().stream()
+            .map(profileMapper::toDto)
+            .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<ProfileDTO> resultProfileDTOList = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < profileDTOList.size(); i++) {
+                HttpResponse<JsonNode> jsonResponse = Unirest.post("https://matrix.route.api.here.com/routing/7.2/calculatematrix.json")
+                    .queryString("app_id", "54Gjd4XAgaftkEoQo61u")
+                    .queryString("app_code", "oqRHrm2ZuCRt429n8-0EJw")
+                    .queryString("matrixattributes", "ix,su")
+                    .queryString("searchrange", "1000")
+                    .queryString("summaryattributes", "cf,tt,di")
+                    .queryString("mode", "fastest;car;traffic:enabled")
+                    .queryString("start0", latitude + "," + longitude)
+                    .queryString("destination0", profileDTOList.get(i).getLatitude() + "," + profileDTOList.get(i).getLongitude())
+                    .asJson();
+                JSONObject jsonObject = jsonResponse.getBody().getObject();
+                JSONObject response = jsonObject.getJSONObject("response");
+                JSONArray matrixEntry = response.getJSONArray("matrixEntry");
+
+                if (!matrixEntry.getJSONObject(0).has("status")){
+                    resultProfileDTOList.add(profileDTOList.get(i));
+                }
+
+                if(resultProfileDTOList.size()>10)
+                    break;
+            }
+
+        }catch (UnirestException e){
+            System.out.println(e);
+        }
+
+        return resultProfileDTOList;
     }
 
 

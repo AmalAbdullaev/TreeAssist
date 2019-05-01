@@ -115,6 +115,13 @@ public class ProfileResource {
         return ResponseUtil.wrapOrNotFound(profileDTO);
     }
 
+    @GetMapping("/profiles/help/{latitude}/{longitude}")
+    public ResponseEntity<List<ProfileDTO>> help(@PathVariable String latitude, @PathVariable String longitude) {
+        log.debug("REST request to get Profile help", latitude, longitude);
+        List<ProfileDTO> entityList = profileService.help(latitude,longitude);
+        return ResponseEntity.ok().body(entityList);
+    }
+
     /**
      * DELETE  /profiles/:id : delete the "id" profile.
      *
