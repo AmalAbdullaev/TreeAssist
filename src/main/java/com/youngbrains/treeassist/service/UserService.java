@@ -10,6 +10,7 @@ import com.youngbrains.treeassist.repository.UserRepository;
 import com.youngbrains.treeassist.security.AuthoritiesConstants;
 import com.youngbrains.treeassist.security.SecurityUtils;
 import com.youngbrains.treeassist.service.dto.ProfileCriteria;
+import com.youngbrains.treeassist.service.dto.ProfileDTO;
 import com.youngbrains.treeassist.service.dto.UserDTO;
 import com.youngbrains.treeassist.service.util.RandomUtil;
 import com.youngbrains.treeassist.web.rest.errors.*;
@@ -51,13 +52,16 @@ public class UserService {
 
     private final ProfileQueryService profileQueryService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, ProfileRepository profileRepository, ProfileQueryService profileQueryService) {
+    private final ProfileService profileService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, ProfileRepository profileRepository, ProfileQueryService profileQueryService, ProfileService profileService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.profileRepository = profileRepository;
         this.profileQueryService = profileQueryService;
+        this.profileService = profileService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -244,11 +248,13 @@ public class UserService {
             LongFilter longFilter = new LongFilter();
             longFilter.setEquals(user.getId());
             profileCriteria.setUserId(longFilter);
-            profileQueryService.findByCriteria(profileCriteria);
+            List<ProfileDTO> profileDTOS = profileQueryService.findByCriteria(profileCriteria);
+            profileService.delete(profileDTOS.get(0).getId());
             userRepository.delete(user);
             this.clearUserCaches(user);
             log.debug("Deleted User: {}", user);
         });
+
     }
 
     public void changePassword(String currentClearTextPassword, String newPassword) {
