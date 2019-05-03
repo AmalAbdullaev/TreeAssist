@@ -5,13 +5,17 @@ import com.youngbrains.treeassist.domain.User;
 import com.youngbrains.treeassist.repository.UserRepository;
 import com.youngbrains.treeassist.security.SecurityUtils;
 import com.youngbrains.treeassist.service.MailService;
+import com.youngbrains.treeassist.service.ProfileQueryService;
 import com.youngbrains.treeassist.service.UserService;
 import com.youngbrains.treeassist.service.dto.PasswordChangeDTO;
+import com.youngbrains.treeassist.service.dto.ProfileCriteria;
+import com.youngbrains.treeassist.service.dto.ProfileDTO;
 import com.youngbrains.treeassist.service.dto.UserDTO;
 import com.youngbrains.treeassist.web.rest.errors.*;
 import com.youngbrains.treeassist.web.rest.vm.KeyAndPasswordVM;
 import com.youngbrains.treeassist.web.rest.vm.ManagedUserVM;
 
+import io.github.jhipster.service.filter.StringFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +41,14 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    ProfileQueryService profileQueryService;
+
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, ProfileQueryService profileQueryService) {
 
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.profileQueryService = profileQueryService;
     }
 
     /**
@@ -99,6 +106,21 @@ public class AccountResource {
         return userService.getUserWithAuthorities()
             .map(UserDTO::new)
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    }
+
+    @GetMapping("/account/profile")
+    public ProfileDTO getAccountProfile() {
+        UserDTO userDTO = getAccount();
+
+        ProfileCriteria profileCriteria = new ProfileCriteria();
+        StringFilter login = new StringFilter();
+        login.setEquals(userDTO.getLogin());
+        profileCriteria.setLogin(login);
+
+        List<ProfileDTO> profileDTOS = profileQueryService.findByCriteria(profileCriteria);
+
+
+        return profileDTOS.size()>0 ? profileDTOS.get(0) : null;
     }
 
     /**

@@ -8,6 +8,7 @@ import com.youngbrains.treeassist.repository.AuthorityRepository;
 import com.youngbrains.treeassist.repository.UserRepository;
 import com.youngbrains.treeassist.security.AuthoritiesConstants;
 import com.youngbrains.treeassist.service.MailService;
+import com.youngbrains.treeassist.service.ProfileQueryService;
 import com.youngbrains.treeassist.service.UserService;
 import com.youngbrains.treeassist.service.dto.PasswordChangeDTO;
 import com.youngbrains.treeassist.service.dto.UserDTO;
@@ -79,15 +80,17 @@ public class AccountResourceIntTest {
 
     private MockMvc restUserMockMvc;
 
+    private ProfileQueryService profileQueryService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         doNothing().when(mockMailService).sendActivationEmail(any());
         AccountResource accountResource =
-            new AccountResource(userRepository, userService, mockMailService);
+            new AccountResource(userRepository, userService, mockMailService, profileQueryService);
 
         AccountResource accountUserMockResource =
-            new AccountResource(userRepository, mockUserService, mockMailService);
+            new AccountResource(userRepository, mockUserService, mockMailService, profileQueryService);
         this.restMvc = MockMvcBuilders.standaloneSetup(accountResource)
             .setMessageConverters(httpMessageConverters)
             .setControllerAdvice(exceptionTranslator)
