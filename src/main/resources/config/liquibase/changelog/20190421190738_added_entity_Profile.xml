@@ -49,7 +49,7 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="is_volunteer" type="boolean">
+            <column name="is_volunteer" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="true" />
             </column>
 

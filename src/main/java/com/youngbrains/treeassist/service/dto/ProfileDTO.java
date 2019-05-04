@@ -108,7 +108,7 @@ public class ProfileDTO implements Serializable {
         this.phone = phone;
     }
 
-    public Boolean isIsVolunteer() {
+    public Boolean getIsVolunteer() {
         return isVolunteer;
     }
 
@@ -212,7 +212,7 @@ public class ProfileDTO implements Serializable {
             ", allergicReactions='" + getAllergicReactions() + "'" +
             ", sex='" + getSex() + "'" +
             ", phone='" + getPhone() + "'" +
-            ", isVolunteer='" + isIsVolunteer() + "'" +
+            ", isVolunteer='" + getIsVolunteer() + "'" +
             ", fcmToken='" + getFcmToken() + "'" +
             ", latitude='" + getLatitude() + "'" +
             ", longitude='" + getLongitude() + "'" +
