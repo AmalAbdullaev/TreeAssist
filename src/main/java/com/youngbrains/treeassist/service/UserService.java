@@ -136,6 +136,7 @@ public class UserService {
         profile.setUser(newUser);
         profile.setLogin(newUser.getLogin());
         profile.setEmail(newUser.getEmail());
+        profile.setIsVolunteer(false);
         profileRepository.save(profile);
 
         userRepository.save(newUser);
