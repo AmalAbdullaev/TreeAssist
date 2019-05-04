@@ -32,9 +32,12 @@ public class ProfileResource {
 
     private final ProfileQueryService profileQueryService;
 
-    public ProfileResource(ProfileService profileService, ProfileQueryService profileQueryService) {
+    private final AccountResource accountResource;
+
+    public ProfileResource(ProfileService profileService, ProfileQueryService profileQueryService, AccountResource accountResource) {
         this.profileService = profileService;
         this.profileQueryService = profileQueryService;
+        this.accountResource = accountResource;
     }
 
     /**
@@ -55,6 +58,41 @@ public class ProfileResource {
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+    @PostMapping("/profiles/fcm-token/{fcmtoken}")
+    public ResponseEntity<ProfileDTO> sendProfileFcmToken(@PathVariable String fcmtoken) throws URISyntaxException {
+        log.debug("REST request send fcmtoken to Profile : {}", fcmtoken);
+        ProfileDTO profileDTO = accountResource.getAccountProfile();
+        profileDTO.setFcmToken(fcmtoken);
+        ProfileDTO result = profileService.save(profileDTO);
+        return ResponseEntity.created(new URI("/api/profiles/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @PostMapping("/profiles/geo-position-service/{latitude}/{longitude}")
+    public ResponseEntity<ProfileDTO> sendProfileGeoPosition(@PathVariable String latitude, @PathVariable String longitude) throws URISyntaxException {
+        log.debug("REST request send geo service to Profile : {}", latitude, longitude);
+        ProfileDTO profileDTO = accountResource.getAccountProfile();
+        profileDTO.setLatitude(latitude);
+        profileDTO.setLongitude(longitude);
+        ProfileDTO result = profileService.save(profileDTO);
+        return ResponseEntity.created(new URI("/api/profiles/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @PostMapping("/profiles/volunteer-mode/{mode}")
+    public ResponseEntity<ProfileDTO> changeProfileVolunteerMode(@PathVariable Boolean mode) throws URISyntaxException {
+        log.debug("REST request change is volonteer to Profile : {}", mode);
+        ProfileDTO profileDTO = accountResource.getAccountProfile();
+        profileDTO.setIsVolunteer(mode);
+        ProfileDTO result = profileService.save(profileDTO);
+        return ResponseEntity.created(new URI("/api/profiles/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
 
     /**
      * PUT  /profiles : Updates an existing profile.
@@ -118,7 +156,8 @@ public class ProfileResource {
     @GetMapping("/profiles/help/{latitude}/{longitude}")
     public ResponseEntity<List<ProfileDTO>> help(@PathVariable String latitude, @PathVariable String longitude) {
         log.debug("REST request to get Profile help", latitude, longitude);
-        List<ProfileDTO> entityList = profileService.help(latitude,longitude);
+        ProfileDTO profile = accountResource.getAccountProfile();
+        List<ProfileDTO> entityList = profileService.help(latitude,longitude,profile.getUserLogin());
         return ResponseEntity.ok().body(entityList);
     }
 

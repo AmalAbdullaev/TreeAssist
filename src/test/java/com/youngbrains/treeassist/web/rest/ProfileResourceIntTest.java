@@ -122,10 +122,12 @@ public class ProfileResourceIntTest {
 
     private Profile profile;
 
+    private AccountResource accountResource;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ProfileResource profileResource = new ProfileResource(profileService, profileQueryService);
+        final ProfileResource profileResource = new ProfileResource(profileService, profileQueryService, accountResource);
         this.restProfileMockMvc = MockMvcBuilders.standaloneSetup(profileResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

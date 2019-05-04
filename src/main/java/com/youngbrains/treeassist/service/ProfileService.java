@@ -70,7 +70,7 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProfileDTO> help(String latitude,String longitude) {
+    public List<ProfileDTO> help(String latitude,String longitude, String userLogin) {
         log.debug("Request to get all Profiles");
 
         ArrayList <ProfileDTO> profileDTOList = profileRepository.findAll().stream()
@@ -79,8 +79,16 @@ public class ProfileService {
 
         ArrayList<ProfileDTO> resultProfileDTOList = new ArrayList<>();
 
+
         try {
             for (int i = 0; i < profileDTOList.size(); i++) {
+
+                if(profileDTOList.get(i).getLogin().equals(userLogin) || !profileDTOList.get(i).getIsVolunteer())
+                    continue;
+
+                if(resultProfileDTOList.size()>10)
+                    break;
+
                 HttpResponse<JsonNode> jsonResponse = Unirest.post("https://matrix.route.api.here.com/routing/7.2/calculatematrix.json")
                     .queryString("app_id", "54Gjd4XAgaftkEoQo61u")
                     .queryString("app_code", "oqRHrm2ZuCRt429n8-0EJw")
@@ -98,13 +106,10 @@ public class ProfileService {
                 if (!matrixEntry.getJSONObject(0).has("status")){
                     resultProfileDTOList.add(profileDTOList.get(i));
                 }
-
-                if(resultProfileDTOList.size()>10)
-                    break;
             }
 
         }catch (UnirestException e){
-            System.out.println(e);
+            log.debug("Unirest Exception", e);
         }
 
         return resultProfileDTOList;
