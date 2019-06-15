@@ -9,8 +9,11 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.youngbrains.treeassist.domain.Profile;
 import com.youngbrains.treeassist.repository.ProfileRepository;
+import com.youngbrains.treeassist.service.dto.ProfileCriteria;
 import com.youngbrains.treeassist.service.dto.ProfileDTO;
 import com.youngbrains.treeassist.service.mapper.ProfileMapper;
+import io.github.jhipster.service.filter.BooleanFilter;
+import io.github.jhipster.service.filter.StringFilter;
 import net.logstash.logback.encoder.org.apache.commons.lang.UnhandledException;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.json.JSONArray;
@@ -46,13 +49,16 @@ public class ProfileService {
 
     private final ProfileMapper profileMapper;
 
+    private final ProfileQueryService profileQueryService;
+
 
     @Autowired
     AndroidPushNotificationsService androidPushNotificationsService;
 
-    public ProfileService(ProfileRepository profileRepository, ProfileMapper profileMapper) {
+    public ProfileService(ProfileRepository profileRepository, ProfileMapper profileMapper, ProfileQueryService profileQueryService) {
         this.profileRepository = profileRepository;
         this.profileMapper = profileMapper;
+        this.profileQueryService = profileQueryService;
     }
 
     /**
@@ -85,35 +91,31 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public void sendPushNotificationsTo(List<ProfileDTO> profileDTOList, String userLatitude,String userLongitude) {
 
-        ArrayList<String> tokens = new ArrayList<>();
-
         for (ProfileDTO profileDTO: profileDTOList) {
-            tokens.add(profileDTO.getFcmToken());
-        }
-
-        JSONObject body = new JSONObject();
+            JSONObject body = new JSONObject();
 //        body.put("to", "fOHPLE-iOe0:APA91bEWgcGKmPneqpnQKUN0sJM2174FK1hS-MaA9DfkIH_TqcpRIeo5TnBnYO_6w4Xo6EcZtpl2BUl7VX4rPDAEdTnxmOVFhGFtmp2PpoElh0mp3EChSQFZuyeiWy_JoI5BxM8xDVmP");
-        body.put("registration_ids",tokens);
-        body.put("priority", "high");
-        JSONObject data = new JSONObject();
-        data.put("title", "Помогите");
-        data.put("body", "Требуется помощь по данным координатам");
-        data.put("latitude", userLatitude);
-        data.put("longitude", userLongitude);
-        body.put("data", data);
+            body.put("to", profileDTO.getFcmToken());
+            body.put("priority", "high");
+            JSONObject data = new JSONObject();
+            data.put("title", "Помогите");
+            data.put("body", "Требуется помощь по данным координатам");
+            data.put("latitude", userLatitude);
+            data.put("longitude", userLongitude);
+            body.put("data", data);
 
-        HttpEntity<String> request = new HttpEntity<>(body.toString());
+            HttpEntity<String> request = new HttpEntity<>(body.toString());
 
-        CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
-        CompletableFuture.allOf(pushNotification).join();
+            CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
+            CompletableFuture.allOf(pushNotification).join();
 
-        try {
-            String firebaseResponse = pushNotification.get();
-            log.debug(firebaseResponse, HttpStatus.OK);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            try {
+                String firebaseResponse = pushNotification.get();
+                log.debug(firebaseResponse, HttpStatus.OK);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -121,17 +123,23 @@ public class ProfileService {
     public List<ProfileDTO> help(String latitude,String longitude, String userLogin) {
         log.debug("Request to get all Profiles");
 
-        ArrayList <ProfileDTO> profileDTOList = profileRepository.findAll().stream()
-            .map(profileMapper::toDto)
-            .collect(Collectors.toCollection(ArrayList::new));
+        ProfileCriteria profileCriteria = new ProfileCriteria();
 
+        BooleanFilter booleanFilter = new BooleanFilter();
+        booleanFilter.setEquals(true);
+        profileCriteria.setIsVolunteer(booleanFilter);
+
+        List <ProfileDTO> profileDTOList = profileQueryService.findByCriteria(profileCriteria);
         ArrayList<ProfileDTO> resultProfileDTOList = new ArrayList<>();
-
 
         try {
             for (int i = 0; i < profileDTOList.size(); i++) {
 
-                if(profileDTOList.get(i).getLogin().equals(userLogin) || !profileDTOList.get(i).getIsVolunteer())
+                ProfileDTO currentProfileDTO = profileDTOList.get(i);
+
+                if(currentProfileDTO.getLogin().equals(userLogin)
+                    || currentProfileDTO.getLongitude().length() < 1
+                    || currentProfileDTO.getLatitude().length() < 1)
                     continue;
 
                 if(resultProfileDTOList.size()>10)
@@ -145,14 +153,14 @@ public class ProfileService {
                     .queryString("summaryattributes", "cf,tt,di")
                     .queryString("mode", "fastest;car;traffic:enabled")
                     .queryString("start0", latitude + "," + longitude)
-                    .queryString("destination0", profileDTOList.get(i).getLatitude() + "," + profileDTOList.get(i).getLongitude())
+                    .queryString("destination0", currentProfileDTO.getLatitude() + "," + currentProfileDTO.getLongitude())
                     .asJson();
                 JSONObject jsonObject = jsonResponse.getBody().getObject();
                 JSONObject response = jsonObject.getJSONObject("response");
                 JSONArray matrixEntry = response.getJSONArray("matrixEntry");
 
                 if (!matrixEntry.getJSONObject(0).has("status")){
-                    resultProfileDTOList.add(profileDTOList.get(i));
+                    resultProfileDTOList.add(currentProfileDTO);
                 }
             }
 
