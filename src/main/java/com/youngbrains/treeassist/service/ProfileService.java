@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpEntity;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -104,7 +105,7 @@ public class ProfileService {
             data.put("longitude", userLongitude);
             body.put("data", data);
 
-            HttpEntity<String> request = new HttpEntity<>(body.toString());
+            HttpEntity<String> request = new HttpEntity<>();
 
             CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
             CompletableFuture.allOf(pushNotification).join();

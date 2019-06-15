@@ -21,7 +21,8 @@ public class HeaderRequestInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpRequest wrapper = new HttpRequestWrapper(httpRequest);
+
         wrapper.getHeaders().set(headerName, headerValue);
-        return execution.execute(wrapper, body);
+        return execution.execute(wrapper,body);
     }
 }

@@ -30,6 +30,7 @@ public class AndroidPushNotificationsService {
         ArrayList<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new HeaderRequestInterceptor("Authorization", "key=" + FIREBASE_SERVER_KEY));
         interceptors.add(new HeaderRequestInterceptor("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE));
+        interceptors.add(new HeaderRequestInterceptor("accept-encoding", "gzip, deflate"));
         restTemplate.setInterceptors(interceptors);
 
         String firebaseResponse = restTemplate.postForObject(FIREBASE_API_URL, entity, String.class);
