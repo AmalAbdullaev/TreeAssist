@@ -83,22 +83,24 @@ public class ProfileService {
 
     //TEST
     @Transactional(readOnly = true)
-    public void send() {
+    public void sendPushNotificationsTo(List<ProfileDTO> profileDTOList, String userLatitude,String userLongitude) {
+
+        ArrayList<String> tokens = new ArrayList<>();
+
+        for (ProfileDTO profileDTO: profileDTOList) {
+            tokens.add(profileDTO.getFcmToken());
+        }
+
         JSONObject body = new JSONObject();
-        body.put("to", "fOHPLE-iOe0:APA91bEWgcGKmPneqpnQKUN0sJM2174FK1hS-MaA9DfkIH_TqcpRIeo5TnBnYO_6w4Xo6EcZtpl2BUl7VX4rPDAEdTnxmOVFhGFtmp2PpoElh0mp3EChSQFZuyeiWy_JoI5BxM8xDVmP");
+//        body.put("to", "fOHPLE-iOe0:APA91bEWgcGKmPneqpnQKUN0sJM2174FK1hS-MaA9DfkIH_TqcpRIeo5TnBnYO_6w4Xo6EcZtpl2BUl7VX4rPDAEdTnxmOVFhGFtmp2PpoElh0mp3EChSQFZuyeiWy_JoI5BxM8xDVmP");
+        body.put("registration_ids",tokens);
         body.put("priority", "high");
-
-        JSONObject notification = new JSONObject();
-        notification.put("title", "JSA Notification");
-        notification.put("body", "Happy Message!");
-
         JSONObject data = new JSONObject();
-        data.put("Key-1", "JSA Data 1");
-        data.put("Key-2", "JSA Data 2");
-
-        body.put("notification", notification);
+        data.put("title", "Помогите");
+        data.put("body", "Требуется помощь по данным координатам");
+        data.put("latitude", userLatitude);
+        data.put("longitude", userLongitude);
         body.put("data", data);
-
 
         HttpEntity<String> request = new HttpEntity<>(body.toString());
 

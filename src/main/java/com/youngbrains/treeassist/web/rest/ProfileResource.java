@@ -158,15 +158,9 @@ public class ProfileResource {
         log.debug("REST request to get Profile help", latitude, longitude);
         ProfileDTO profile = accountResource.getAccountProfile();
         List<ProfileDTO> entityList = profileService.help(latitude,longitude,profile.getUserLogin());
+        profileService.sendPushNotificationsTo(entityList,latitude,longitude);
         return ResponseEntity.ok().body(entityList);
     }
-
-    @GetMapping("/profiles/send")
-    public ResponseEntity<Void> send() {
-        profileService.send();
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, "Ok")).build();
-    }
-
 
     /**
      * DELETE  /profiles/:id : delete the "id" profile.

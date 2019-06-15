@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class AndroidPushNotificationsService {
 
-    private static final String FIREBASE_SERVER_KEY = "AAAA1xh3-jM:APA91bHVaKy_HU4BLynr7p68vRcuCWdC1dsmSJAwygsg04t3GjiqlXIffaMTJ1-07ZD-ODSgSwaZwY6Z53UnGhiYb9egqe00y5EY2BapLSIM7ifPEsU4IX2eKE4uOgD3B_VhTJrVVNS-";
+    private static final String FIREBASE_SERVER_KEY = "AAAA1xh3-jM:APA91bEwvwOeXlj6wvuVkiriDNj7HaQKw_stYh4FUcZNqKJUZji372O0742ggyMSELvfW6CeB5cmQvRJEftQ42J2ejKyfw4z6Iui1Nxl63zsiZofWvnU5WbuHbXNctYsCUdSwADMJqYA";
     private static final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
 
     @Async
