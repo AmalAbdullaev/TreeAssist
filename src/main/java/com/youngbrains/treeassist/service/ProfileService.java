@@ -85,7 +85,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public void send() {
         JSONObject body = new JSONObject();
-        body.put("to", "efjjDfYwnGk:APA91bE5MbGrJusK8iNNK946gImjYCUbD6FG1TfY4Lk-n65p3Zll2Ifl8wyoEe-iYTSWv8sbaUGWf6Oew8i6UzdZHO90WbfpGNDsldiEwEbbofVGIV3xHdWUFibgSTK264LGDf4swz4I");
+        body.put("to", "fqeNX1FEdIE:APA91bFi-bKau2pRVi2CfwgMx1x7Ijj-8ouune6plvWfecsrUDT5v0coXJMMRPftwuDtsmgZwBccmI0j1RSzVCkG8NHfyTTDATnVf1ePfsNbWe4KkUxMb5gwBGU6knzby39261PJXkHq");
         body.put("priority", "high");
 
         JSONObject notification = new JSONObject();
