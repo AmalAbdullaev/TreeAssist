@@ -31,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpEntity;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -105,7 +108,15 @@ public class ProfileService {
             data.put("longitude", userLongitude);
             body.put("data", data);
 
-            HttpEntity<String> request = new HttpEntity<>(body.toString());
+            String decodet;
+            try {
+                decodet = URLDecoder.decode(data.toString(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.debug("utf8", "conversion", e);
+                decodet = body.toString();
+            }
+
+            HttpEntity<String> request = new HttpEntity<>(decodet);
 
             CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
             CompletableFuture.allOf(pushNotification).join();
