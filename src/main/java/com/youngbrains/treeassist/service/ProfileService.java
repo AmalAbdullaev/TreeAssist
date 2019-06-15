@@ -85,7 +85,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public void send() {
         JSONObject body = new JSONObject();
-        body.put("to", "fqeNX1FEdIE:APA91bFi-bKau2pRVi2CfwgMx1x7Ijj-8ouune6plvWfecsrUDT5v0coXJMMRPftwuDtsmgZwBccmI0j1RSzVCkG8NHfyTTDATnVf1ePfsNbWe4KkUxMb5gwBGU6knzby39261PJXkHq");
+        body.put("to", "fOHPLE-iOe0:APA91bEWgcGKmPneqpnQKUN0sJM2174FK1hS-MaA9DfkIH_TqcpRIeo5TnBnYO_6w4Xo6EcZtpl2BUl7VX4rPDAEdTnxmOVFhGFtmp2PpoElh0mp3EChSQFZuyeiWy_JoI5BxM8xDVmP");
         body.put("priority", "high");
 
         JSONObject notification = new JSONObject();
@@ -107,7 +107,6 @@ public class ProfileService {
 
         try {
             String firebaseResponse = pushNotification.get();
-
             log.debug(firebaseResponse, HttpStatus.OK);
         } catch (InterruptedException e) {
             e.printStackTrace();
