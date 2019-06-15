@@ -92,15 +92,22 @@ public class ProfileService {
     public void sendPushNotificationsTo(List<ProfileDTO> profileDTOList, String userLatitude,String userLongitude) {
 
         for (ProfileDTO profileDTO: profileDTOList) {
+
             JSONObject body = new JSONObject();
-//        body.put("to", "fOHPLE-iOe0:APA91bEWgcGKmPneqpnQKUN0sJM2174FK1hS-MaA9DfkIH_TqcpRIeo5TnBnYO_6w4Xo6EcZtpl2BUl7VX4rPDAEdTnxmOVFhGFtmp2PpoElh0mp3EChSQFZuyeiWy_JoI5BxM8xDVmP");
             body.put("to", profileDTO.getFcmToken());
             body.put("priority", "high");
+
+            JSONObject notification = new JSONObject();
+            notification.put("title", "JSA Notification");
+            notification.put("body", "Happy Message!");
+
             JSONObject data = new JSONObject();
-            data.put("title", "Помогите");
-            data.put("body", "Требуется помощь по данным координатам");
             data.put("latitude", userLatitude);
             data.put("longitude", userLongitude);
+            data.put("body", "Требуется помощь по данным координатам");
+            data.put("title", "Помогите");
+
+            body.put("notification", notification);
             body.put("data", data);
 
             HttpEntity<String> request = new HttpEntity<>(body.toString());
