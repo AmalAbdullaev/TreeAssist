@@ -105,7 +105,7 @@ public class ProfileService {
             data.put("longitude", userLongitude);
             body.put("data", data);
 
-            HttpEntity<String> request = new HttpEntity<>();
+            HttpEntity<String> request = new HttpEntity<>(body.toString());
 
             CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
             CompletableFuture.allOf(pushNotification).join();
