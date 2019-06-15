@@ -161,6 +161,13 @@ public class ProfileResource {
         return ResponseEntity.ok().body(entityList);
     }
 
+    @GetMapping("/profiles/send")
+    public ResponseEntity<Void> send() {
+        profileService.send();
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, "Ok")).build();
+    }
+
+
     /**
      * DELETE  /profiles/:id : delete the "id" profile.
      *

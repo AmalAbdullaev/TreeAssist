@@ -2,6 +2,7 @@ package com.youngbrains.treeassist.service;
 
 
 
+
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -19,10 +20,17 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpEntity;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +45,10 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
 
     private final ProfileMapper profileMapper;
+
+
+    @Autowired
+    AndroidPushNotificationsService androidPushNotificationsService;
 
     public ProfileService(ProfileRepository profileRepository, ProfileMapper profileMapper) {
         this.profileRepository = profileRepository;
@@ -67,6 +79,41 @@ public class ProfileService {
         return profileRepository.findAll().stream()
             .map(profileMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    //TEST
+    @Transactional(readOnly = true)
+    public void send() {
+        JSONObject body = new JSONObject();
+        body.put("to", "efjjDfYwnGk:APA91bE5MbGrJusK8iNNK946gImjYCUbD6FG1TfY4Lk-n65p3Zll2Ifl8wyoEe-iYTSWv8sbaUGWf6Oew8i6UzdZHO90WbfpGNDsldiEwEbbofVGIV3xHdWUFibgSTK264LGDf4swz4I");
+        body.put("priority", "high");
+
+        JSONObject notification = new JSONObject();
+        notification.put("title", "JSA Notification");
+        notification.put("body", "Happy Message!");
+
+        JSONObject data = new JSONObject();
+        data.put("Key-1", "JSA Data 1");
+        data.put("Key-2", "JSA Data 2");
+
+        body.put("notification", notification);
+        body.put("data", data);
+
+
+        HttpEntity<String> request = new HttpEntity<>(body.toString());
+
+        CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
+        CompletableFuture.allOf(pushNotification).join();
+
+        try {
+            String firebaseResponse = pushNotification.get();
+
+            log.debug(firebaseResponse, HttpStatus.OK);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional(readOnly = true)
