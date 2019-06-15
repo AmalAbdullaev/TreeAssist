@@ -97,17 +97,11 @@ public class ProfileService {
             body.put("to", profileDTO.getFcmToken());
             body.put("priority", "high");
 
-            JSONObject notification = new JSONObject();
-            notification.put("title", "Помогите");
-            notification.put("body", "Требуется помощь по данным координатам");
-
             JSONObject data = new JSONObject();
+            data.put("title", "Помогите");
+            data.put("body", "Требуется помощь по данным координатам");
             data.put("latitude", userLatitude);
             data.put("longitude", userLongitude);
-            data.put("body", "Требуется помощь по данным координатам");
-            data.put("title", "Помогите");
-
-            body.put("notification", notification);
             body.put("data", data);
 
             HttpEntity<String> request = new HttpEntity<>(body.toString());
