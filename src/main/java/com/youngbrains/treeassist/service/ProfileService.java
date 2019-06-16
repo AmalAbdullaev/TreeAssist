@@ -108,15 +108,7 @@ public class ProfileService {
             data.put("longitude", userLongitude);
             body.put("data", data);
 
-            String decodet;
-            try {
-                decodet = URLDecoder.decode(data.toString(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                log.debug("utf8", "conversion", e);
-                decodet = body.toString();
-            }
-
-            HttpEntity<String> request = new HttpEntity<>(decodet);
+            HttpEntity<String> request = new HttpEntity<>(body.toString());
 
             CompletableFuture<String> pushNotification = androidPushNotificationsService.send(request);
             CompletableFuture.allOf(pushNotification).join();
